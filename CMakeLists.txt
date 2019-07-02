@@ -207,6 +207,11 @@ add_custom_target(combined_lib
 
 # Tests
 set(TEST_EXECS "")
+file(GLOB TEST_SRCS test/cpp/*.cc)
+find_library(GTEST_LIB NAMES libgtest.a gtest)
+
+# Tests
+set(TEST_EXECS "")
 file(GLOB TEST_SRCS tests/cpp/*.cc)
 find_library(GTEST_LIB NAMES libgtest.a gtest)
 
