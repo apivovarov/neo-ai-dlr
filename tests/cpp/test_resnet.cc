@@ -16,7 +16,7 @@
 
 typedef std::chrono::high_resolution_clock::time_point TimeVar;
 
-#define duration(a) std::chrono::duration_cast<std::chrono::nanoseconds>(a).count()
+#define duration(a) std::chrono::duration_cast<std::chrono::milliseconds>(a).count()
 #define timeNow() std::chrono::high_resolution_clock::now()
 
 struct NDArray {
@@ -189,11 +189,11 @@ int main(int argc, char** argv) {
   int rep = 100;
   for (int i = 0; i < rep; i++) {
     // LOG(INFO) << get_time_milli();
-    TimeVar t1=timeNow();
+    auto t1=timeNow();
     std::vector<std::vector<float>> tvm_preds = RunInference(model, argv[2], input_name);
-    size_t time = duration(timeNow()-t1);
-    total += time / 1000000;
-    std::cout <<"Rep "<< i << " latency: " << time / 1000000 << "ms" << std::endl;
+    auto time = duration(timeNow()-t1);
+    total += time;
+    std::cout <<"Rep "<< i << " latency: " << time << "ms" << std::endl;
 
     // for (auto v : tvm_preds) {
     //   for (auto i : v) {
@@ -201,7 +201,7 @@ int main(int argc, char** argv) {
     //   }
     // } 
   }  
-  std::cout << "avg latency: " << total / rep;
+  std::cout << "avg latency: " << total / rep << "ms" << std::endl;
   // std::vector<std::vector<float>> golden = {{4.0f, 6.0f}, {13.0f, 15.0f, 17.0f}};
 
   // Compare tvm_preds against preset golden
