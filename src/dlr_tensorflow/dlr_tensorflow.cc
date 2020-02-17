@@ -276,19 +276,22 @@ TensorflowModel::TensorflowModel(
   LOG(INFO) << "Tensorflow Model was created";
 
   TF_SessionOptions* opts = TF_NewSessionOptions();
+  std::vector<std::uint8_t> config;
   if (threads > 0 && threads < 256) {
     // More info https://github.com/tensorflow/tensorflow/issues/13853
-    std::array<std::uint8_t, 4> config = {
-        {0x10, (std::uint8_t)threads, 0x28, (std::uint8_t)threads}};
-    TF_SetConfig(opts, config.data(), config.size(), status_);
-
-    if (TF_GetCode(status_) != TF_OK) {
-      TF_DeleteSessionOptions(opts);
-      LOG(FATAL) << "ERROR: TF_SetConfig failed " << TF_Message(status_);
-      return;  // unreachable
-    }
-    LOG(INFO) << "Set number of threads to " << threads;
+    // intra_op_parallelism_threads, inter_op_parallelism_threads
+    config.insert(config.end(), {0x10, (std::uint8_t)threads, 0x28, (std::uint8_t)threads});
   }
+  // GPUOptions(allow_growth=True) - allows to share GPU.
+  config.insert(config.end(), {0x32, 0x2, 0x20, 0x1}};
+  TF_SetConfig(opts, config.data(), config.size(), status_);
+
+  if (TF_GetCode(status_) != TF_OK) {
+    TF_DeleteSessionOptions(opts);
+    LOG(FATAL) << "ERROR: TF_SetConfig failed " << TF_Message(status_);
+    return;  // unreachable
+  }
+  LOG(INFO) << "Set number of threads to " << threads;
 
   sess_ = TF_NewSession(graph_, opts, status_);
   if (TF_GetCode(status_) != TF_OK) {
@@ -387,6 +390,11 @@ void TensorflowModel::GetOutputSizeDim(int index, int64_t* size, int* dim) {
 }
 
 void TensorflowModel::Run() {
+  for (TF_Tensor* tensor : output_tensors_) {
+    if (tensor != nullptr) {
+      TF_DeleteTensor(tensor);
+    }
+  }
   TF_SessionRun(sess_,
                 NULL,  // Run options.
                 inputs_.data(), input_tensors_.data(), num_inputs_,
