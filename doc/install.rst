@@ -86,10 +86,8 @@ Ensure that all necessary software packages are installed: GCC (or Clang), CMake
 .. code-block:: bash
 
   sudo apt-get update
-  sudo apt-get install -y python3 python3-setuptools build-essential cmake curl ca-certificates
-  curl https://bootstrap.pypa.io/get-pip.py -o /tmp/get-pip.py
-  sudo python3 /tmp/get-pip.py
-  rm /tmp/get-pip.py
+  sudo apt-get install -y python3 python3-pip python3-setuptools build-essential cmake curl ca-certificates
+  sudo pip3 install -U pip setuptools
 
 
 Building for CPU
