@@ -212,7 +212,7 @@ void TreeliteModel::GetOutputSizeDim(int index, int64_t* size, int* dim) {
         static_cast<int64_t>(treelite_input_->num_row * treelite_output_size_);
   } else {
     // Input is yet unspecified and batch is not known
-    *size = treelite_output_size_;
+    *size = -1;
   }
   *dim = 2;
 }
