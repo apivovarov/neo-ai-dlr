@@ -122,6 +122,7 @@ const int TreeliteModel::GetInputDim(int index) const { return kInputDim; }
 const int64_t TreeliteModel::GetInputSize(int index) const {
   CHECK_LT(index, num_inputs_) << "Input index is out of range.";
   const std::vector<int64_t>& shape = GetInputShape(index);
+  if (dlr::HasNegative(shape.data(), shape.size())) return -1;
   return abs(std::accumulate(shape.begin(), shape.end(), 1,
                          std::multiplies<int64_t>()));
 }
