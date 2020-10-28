@@ -181,20 +181,20 @@ TEST(PipelineTest, TestRunDLRModel_GetDLROutput) {
   // output 0
   float output0[16];
   EXPECT_EQ(GetDLROutput(&model, 0, output0), 0);
-  EXPECT_LE(output0[0] - 0.442, 1e-6);
+  EXPECT_FLOAT_EQ(output0[0], 0.442);
   float* output0_p;
   EXPECT_EQ(GetDLROutputPtr(&model, 0, (const void**) &output0_p), 0);
-  EXPECT_LE(output0_p[0] - 0.442, 1e-6);
+  EXPECT_FLOAT_EQ(output0_p[0], 0.442);
   for (int i = 0; i < 16; i++) {
     EXPECT_EQ(output0_p[i], output0[i]);
   }
   // output 1
   float output1[16];
   EXPECT_EQ(GetDLROutput(&model, 1, output1), 0);
-  EXPECT_LE(output1[0] - 0.00516, 1e-6);
+  EXPECT_FLOAT_EQ(output1[0], 0.00516);
   float* output1_p;
   EXPECT_EQ(GetDLROutputPtr(&model, 1, (const void**) &output1_p), 0);
-  EXPECT_LE(output1_p[0] - 0.00516, 1e-6);
+  EXPECT_FLOAT_EQ(output1_p[0], 0.00516);
   for (int i = 0; i < 16; i++) {
     EXPECT_EQ(output1_p[i], output1[i]);
   }

@@ -51,10 +51,10 @@ TEST(PipelineTest, TestGetDLRInputType) {
 TEST(PipelineTest, TestSetDLRInput) {
   auto model = GetDLRModel();
   std::string in_data = "[[0.5,0.6],[0.55,0.66],[0.73,0.83]]";
-  int64_t shape[1] = { (int64_t) in_data.length() };
+  int64_t shape[1] = { static_cast<int64_t>(in_data.length()) };
   int ndim = 1;
   const char* input_name = "input";
-  EXPECT_EQ(SetDLRInput(&model, input_name, shape, (void*) in_data.c_str(), ndim), 0);
+  EXPECT_EQ(SetDLRInput(&model, input_name, shape, const_cast<char*>(in_data.c_str()), ndim), 0);
   std::vector<float> exp_data = {0.5, 0.6, 0.55, 0.66, 0.73, 0.83};
   std::vector<float> in_data2(6);
   EXPECT_EQ(GetDLRInput(&model, input_name, in_data2.data()), 0);
@@ -126,10 +126,10 @@ TEST(PipelineTest, TestGetDLRBackend) {
 TEST(PipelineTest, TestRunDLRModel_GetDLROutput) {
   auto model = GetDLRModel();
   std::string in_data = "[[0.3450364,0.3976527],[0.3919772,0.1761725],[0.2091535,0.4263429]]";
-  int64_t shape[1] = { (int64_t) in_data.length() };
+  int64_t shape[1] = { static_cast<int64_t>(in_data.length()) };
   int ndim = 1;
   const char* input_name = "input";
-  EXPECT_EQ(SetDLRInput(&model, input_name, shape, (void*) in_data.c_str(), ndim), 0);
+  EXPECT_EQ(SetDLRInput(&model, input_name, shape, const_cast<char*>(in_data.c_str()), ndim), 0);
   EXPECT_EQ(RunDLRModel(&model), 0);
   // check output metadata
   int64_t output_size;
@@ -149,9 +149,9 @@ TEST(PipelineTest, TestRunDLRModel_GetDLROutput) {
   float output0[3];
   EXPECT_EQ(GetDLROutput(&model, 0, output0), 0);
   // batch 0, 1 and 2
-  EXPECT_LE(output0[0] - 0.7462196, 1e-6);
-  EXPECT_LE(output0[1] - 0.5697872, 1e-6);
-  EXPECT_LE(output0[2] - 0.6209581, 1e-6);
+  EXPECT_FLOAT_EQ(output0[0], 0.7462196);
+  EXPECT_FLOAT_EQ(output0[1], 0.5697872);
+  EXPECT_FLOAT_EQ(output0[2], 0.6209581);
   DeleteDLRModel(&model);
 }
 
